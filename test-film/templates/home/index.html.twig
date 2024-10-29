@@ -1,0 +1,109 @@
+{% extends 'base.html.twig' %}
+
+
+
+{% block title %}Welcome to We Movies{% endblock %}
+
+{% block stylesheets %}
+
+
+    {{ encore_entry_link_tags('app') }}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block body %}
+
+
+
+
+    <div class="container mt-5">
+        <!-- Header Section -->
+        <div class="header">
+            <h1>A propos de We Movies</h1>
+            <div class="search-box">
+                <input   type="text" placeholder="Rechercher..." class="form-control d-inline-block movieSearchInput" style="width: 250px;">
+                <button class="btn btn-primary movieSearchInputButton"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+
+        <!-- Video Section -->
+        <div class="video-thumbnail">
+            {% if bestMovieVideoKey %}
+                <!-- Affiche l'iframe avec la vidéo si la clé vidéo est disponible -->
+                <iframe width="800" height="500"
+                        src="https://www.youtube.com/embed/{{ bestMovieVideoKey }}"
+                        title="{{ bestMovie.original_title }}"
+                        frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                </iframe>
+            {% else %}
+                <!-- Affiche l'image du film si aucune vidéo n'est disponible -->
+                <img src="https://image.tmdb.org/t/p/w500/{{ bestMovie.poster_path }}"
+                     alt="{{ bestMovie.original_title }}"
+                     style="width: 800px; height: 500px;">
+            {% endif %}
+            <h4>{{ bestMovie.original_title }} - Bande-annonce</h4>
+        </div>
+
+        <i class="fas fa-play-circle play-button"></i>
+            <div class="video-details">
+                <h4>{{ bestMovie.original_title }}</h4>
+                <p>{{ bestMovie.original_title }} Bande-annonce VF</p>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Sidebar for Genres -->
+            <div class="col-md-3 sidebar">
+                <h5>Genres</h5>
+                {% for genre in genres %}
+                <div class="form-check">
+                    <input class="form-check-input genreCheckbox" type="checkbox"  id="{{ genre.id }}" value="{{ genre.id }}">
+                    <label class="form-check-label" for="{{ genre.name }}">{{ genre.name }}</label>
+                </div>
+
+                {% endfor %}
+            </div>
+
+            <!-- Movies List -->
+            <div class="col-md-9 movieList">
+                {% for movie in movies %}
+                    <div class="movie-card d-flex">
+                        <img src="https://image.tmdb.org/t/p/w500/{{ movie.poster_path }}" alt="{{ movie.original_title }}" class="movie-img">
+                        <div class="movie-info">
+
+                            <h5>{{ movie.title }}</h5>
+                            <p>{{ movie.overview }}</p>
+                            <p class="star-rating">
+                                {{ movie.vote_average | number_format(1, '.', '') }}
+                                {% for i in 1..5 %}
+                                    <i class="fa fa-star"{% if i < movie.vote_average/2 %} style="color: blue;"{% endif %}></i>
+                                {% endfor %}
+                                <small>({{ movie.vote_count }} votes)</small>
+                            </p>
+
+                            <a href="#" movie-video-key="{{ movie.video_key }}"   movie-desc="{{ movie.overview }}" movie-image="{{movie.poster_path}}" movie-rate="{{movie.vote_average}}" movie-name="{{movie.title}}" movie-id="{{movie.id}}"  class="btn btn-primary btn-details detailsFilm">Lire le détails</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    {% include 'home/modalFilm.html.twig' %}
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+
+
+
+
+
+{% endblock %}
+   {% block javascripts %}
+       {{ encore_entry_script_tags('app') }}
+       <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+   {% endblock %}

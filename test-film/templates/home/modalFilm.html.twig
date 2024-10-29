@@ -1,0 +1,39 @@
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="videoModalLabel">Titre du film</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Section de la vidéo -->
+                <div class="ratio ratio-16x9">
+                    <iframe id="iframeVideo" src="" title="" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+                <div class="video-details mt-3">
+                    <p id="movieDescription"></p>
+                    <div>
+                        <p>
+                            <span class="text-warning">★★★★☆</span>
+                            <strong id="movieRating">4.4</strong>
+                        </p>
+                        <p id="userCount">pour 1,529 utilisateurs</p>
+
+                        <!-- Rating Submission Button -->
+                        <div class="star-rating">
+                            <span class="star" data-value="1">&#9733;</span>
+                            <span class="star" data-value="2">&#9733;</span>
+                            <span class="star" data-value="3">&#9733;</span>
+                            <span class="star" data-value="4">&#9733;</span>
+                            <span class="star" data-value="5">&#9733;</span>
+                        </div>
+               {#         <button id="submitRating">Submit Rating</button>#}
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+            </div>
+        </div>
+    </div>
+</div>
