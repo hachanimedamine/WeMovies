@@ -1,19 +1,39 @@
 {% extends 'base.html.twig' %}
 
+{% block stylesheets %}
+
+
+    {{ encore_entry_link_tags('register') }}
+
+{% endblock %}
+
 {% block title %}Register{% endblock %}
 
+
 {% block body %}
-    <h1>Register</h1>
 
-    {{ form_errors(registrationForm) }}
 
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
+    <div class="register-form-container">
+        <h1>Register</h1>
+
+        <div class="form-error">
+            {{ form_errors(registrationForm) }}
+        </div>
+
+        {{ form_start(registrationForm) }}
+        <div class="form-group">
+            {{ form_row(registrationForm.email) }}
+        </div>
+        <div class="form-group">
+            {{ form_row(registrationForm.plainPassword, {
+                label: 'Password'
+            }) }}
+        </div>
+        <div class="form-group">
+            {{ form_row(registrationForm.agreeTerms) }}
+        </div>
 
         <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
+        {{ form_end(registrationForm) }}
+    </div>
 {% endblock %}

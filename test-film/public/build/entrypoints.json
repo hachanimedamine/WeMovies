@@ -8,6 +8,11 @@
       "css": [
         "/build/app.css"
       ]
+    },
+    "register": {
+      "css": [
+        "/build/register.css"
+      ]
     }
   }
 }
