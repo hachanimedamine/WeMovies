@@ -39,22 +39,7 @@ class HomeController extends AbstractController
         }
     }
 
-    #[Route('/submit-rating', name: 'submit_rating', methods: ['POST'])]
-    public function submitRating(Request $request, SessionInterface $session): JsonResponse
-    {
-        $data = json_decode($request->getContent(), true);
 
-        if (empty($data['rating']) || empty($data['movie_id'])) {
-            return new JsonResponse(['error' => 'Les champs rating et movie_id sont requis.'], 400);
-        }
-
-        $rating = $data['rating'];
-        $movieId = $data['movie_id'];
-
-        $session->set('movie_rating', ['idMovie' => $movieId, 'rating' => $rating]);
-
-        return new JsonResponse(['message' => 'Rating submitted successfully!'], 201);
-    }
 
     #[Route('/getList', name: 'getList', methods: ['POST'])]
     public function getListData(Request $request, MovieHtmlGenerator $htmlGenerator, TmdbApiService $tmdbApiService): Response
@@ -88,4 +73,50 @@ class HomeController extends AbstractController
         $rating = $session->get('movie_rating', null);
         return new JsonResponse(['rating' => $rating], 200);
     }
+    #[Route('/autocomplete', name: 'autocomplete', methods: ['GET'])]
+    public function autocomplete(Request $request, TmdbApiService $tmdbApiService, MovieHtmlGenerator $htmlGenerator): Response
+    {
+        $query = $request->query->get('query', '');
+
+        if (empty($query)) {
+            return new Response(''); // Réponse vide si la requête est vide
+        }
+
+        try {
+            // Récupérer les films correspondant au champ de recherche
+            $results = $tmdbApiService->autocompleteSearch($query);
+
+            // Ajouter la clé `video_key` pour chaque film
+            foreach ($results as &$movie) {
+                $movie['video_key'] = $tmdbApiService->getFirstYouTubeVideoKey($movie['id']);
+            }
+
+            // Génération du HTML avec les données des films (incluant `video_key`)
+            $generateHtml = $htmlGenerator->generateMoviesHtml($results);
+
+            return new Response($generateHtml);
+
+        } catch (\Exception $e) {
+            return new Response('Erreur lors de l\'auto-complétion : ' . $e->getMessage(), 500);
+        }
+    }
+
+
+    /* #[Route('/submit-rating', name: 'submit_rating', methods: ['POST'])]
+    public function submitRating(Request $request, SessionInterface $session): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        if (empty($data['rating']) || empty($data['movie_id'])) {
+            return new JsonResponse(['error' => 'Les champs rating et movie_id sont requis.'], 400);
+        }
+
+        $rating = $data['rating'];
+        $movieId = $data['movie_id'];
+
+        $session->set('movie_rating', ['idMovie' => $movieId, 'rating' => $rating]);
+
+        return new JsonResponse(['message' => 'Rating submitted successfully!'], 201);
+    }*/
+
 }

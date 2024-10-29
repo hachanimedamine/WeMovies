@@ -21,22 +21,27 @@
         <!-- Header Section -->
         <div class="header">
             <h1>A propos de We Movies</h1>
-            <div class="search-box">
-                <input   type="text" placeholder="Rechercher..." class="form-control d-inline-block movieSearchInput" style="width: 250px;">
+            <div class="search-box" style="position: relative;">
+                <input type="text" placeholder="Rechercher..." class="form-control d-inline-block movieSearchInput" style="width: 250px;">
                 <button class="btn btn-primary movieSearchInputButton"><i class="fas fa-search"></i></button>
+                <div class="autocomplete-results" style="position: absolute; top: 100%; left: 0; width: 130%; background-color: white; border: 1px solid #ddd; display: none; z-index: 1000;"></div>
             </div>
+
         </div>
 
         <!-- Video Section -->
         <div class="video-thumbnail">
             {% if bestMovieVideoKey %}
                 <!-- Affiche l'iframe avec la vidéo si la clé vidéo est disponible -->
-                <iframe width="800" height="500"
-                        src="https://www.youtube.com/embed/{{ bestMovieVideoKey }}"
-                        title="{{ bestMovie.original_title }}"
-                        frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                        allowfullscreen>
-                </iframe>
+                <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+                    <iframe width="800" height="500"
+                            src="https://www.youtube.com/embed/{{ bestMovieVideoKey }}"
+                            title="{{ bestMovie.original_title }}"
+                            frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                            allowfullscreen>
+                    </iframe>
+                </div>
+
             {% else %}
                 <!-- Affiche l'image du film si aucune vidéo n'est disponible -->
                 <img src="https://image.tmdb.org/t/p/w500/{{ bestMovie.poster_path }}"

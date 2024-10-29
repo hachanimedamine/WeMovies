@@ -1,59 +1,97 @@
 body {
-    background-color: lightgray;
-}
-.star {
-    font-size: 24px;
-    cursor: pointer;
-    color: gray;
-}
-.star:hover,
-.star:hover ~ .star {
-    color: gold;
-}
-.modal-content {
-    padding: 20px;
-    background-color: white;
-    border: 1px solid #ddd;
-    display: inline-block;
-    width: 800px;
-}
-body {
+    background-color: #f5f5f5;
     font-family: Arial, sans-serif;
+    color: #333;
+    margin: 0;
+    padding: 0;
 }
+
 .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin: 20px;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
 }
+
 .search-box {
     display: flex;
     align-items: center;
 }
+
 .search-box input {
-    width: 250px;
+    width: 300px;
+    padding: 8px 10px;
     border: 1px solid #ddd;
-    padding: 5px;
     border-radius: 4px 0 0 4px;
+    outline: none;
+    transition: border-color 0.3s ease;
 }
+
+.search-box input:focus {
+    border-color: #007bff;
+}
+
 .search-box button {
     border: none;
-    padding: 5px 10px;
+    padding: 8px 15px;
     border-radius: 0 4px 4px 0;
     background-color: #007bff;
     color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
+
+.search-box button:hover {
+    background-color: #0056b3;
+}
+
+.star {
+    font-size: 24px;
+    cursor: pointer;
+    color: #bbb;
+    transition: color 0.2s ease;
+}
+
+.star:hover,
+.star:hover ~ .star {
+    color: #ffbf00;
+}
+
+.star-rating {
+    color: #ffc107;
+}
+
+.modal-content {
+    padding: 25px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 800px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
 .video-thumbnail {
     position: relative;
     width: 100%;
     height: auto;
     margin-bottom: 20px;
     border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
 }
+
 .video-thumbnail img {
     width: 100%;
     border-radius: 8px;
 }
+
+.video-thumbnail:hover {
+    transform: scale(1.02);
+}
+
 .play-button {
     position: absolute;
     top: 50%;
@@ -61,48 +99,103 @@ body {
     transform: translate(-50%, -50%);
     font-size: 50px;
     color: white;
-    opacity: 0.7;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
 }
+
 .play-button:hover {
     opacity: 1;
 }
+
 .video-details {
     text-align: center;
-    margin-top: 10px;
+    margin-top: 15px;
+    font-size: 16px;
+    color: #444;
 }
+
 .sidebar {
-    padding: 15px;
+    padding: 20px;
     border: 1px solid #ddd;
     border-radius: 8px;
     margin-bottom: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
 }
+
 .movie-card {
     display: flex;
     border: 1px solid #ddd;
     border-radius: 8px;
     margin-bottom: 20px;
-    padding: 10px;
+    padding: 15px;
+    background-color: #ffffff;
+    transition: box-shadow 0.3s ease;
 }
+
+.movie-card:hover {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
 .movie-img {
     width: 100px;
     height: auto;
     margin-right: 15px;
     border-radius: 5px;
+    transition: transform 0.3s ease;
 }
+
+.movie-img:hover {
+    transform: scale(1.05);
+}
+
 .movie-info {
     flex: 1;
 }
+
 .movie-info h5 {
     margin: 0;
+    font-size: 18px;
+    color: #333;
 }
+
 .movie-info p {
-    margin: 0;
+    margin: 5px 0;
     font-size: 14px;
-    color: #555;
+    color: #666;
 }
+
 .movie-info .btn-details {
+    display: inline-block;
     margin-top: 10px;
+    padding: 8px 15px;
+    background-color: #007bff;
+    color: white;
+    border-radius: 4px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
 }
-.star-rating {
-    color: #ffc107;
+
+.movie-info .btn-details:hover {
+    background-color: #0056b3;
+}
+
+.autocomplete-results {
+    max-height: 400px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 5px;
+}
+
+.autocomplete-item {
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.autocomplete-item:hover {
+    background-color: #f0f0f0;
 }

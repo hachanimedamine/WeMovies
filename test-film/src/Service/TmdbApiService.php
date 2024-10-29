@@ -23,6 +23,22 @@ class TmdbApiService
         $this->serializer = $serializer;
     }
 
+    public function autocompleteSearch(string $query): array
+    {
+        $response = $this->client->request('GET', 'search/movie', [
+            'query' => [
+                'query' => $query,
+                'include_adult' => 'false',
+                'language' => 'en-US',
+                'page' => 1
+            ]
+        ]);
+
+        $data = json_decode($response->getBody()->getContents(), true);
+
+        return $data['results'] ?? [];
+    }
+
     /**
      * Sérialise les données en JSON.
      *

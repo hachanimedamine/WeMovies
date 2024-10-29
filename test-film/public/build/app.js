@@ -1,7 +1,13 @@
 $(document).ready(function () {
+    const autocompleteResults = $('.autocomplete-results');
+    let typingTimer;
+    const typingInterval = 300; // Intervalle de frappe légèrement plus long pour limiter les requêtes
+    let cache = {}; // Cache pour stocker les résultats de recherche
+    let isFetchingAutocomplete = false; // Contrôle pour les requêtes `autocomplete`
+
     // Fonction pour afficher les détails du film et charger la vidéo dans la modale
     function showMovieDetails() {
-        $('.detailsFilm').off('click').on('click', function (e) {
+        $(document).on('click', '.detailsFilm', function (e) {
             e.preventDefault();
 
             const name = $(this).attr('movie-name');
@@ -11,10 +17,6 @@ $(document).ready(function () {
             const desc = $(this).attr('movie-desc');
             const count = $(this).attr('movie-count');
 
-            // Debugging pour vérifier que les attributs sont bien présents
-            console.log('Video Key:', videoKey);
-            console.log('Video URL:', videoUrl);
-
             $('#iframeVideo').attr('src', videoUrl);
             $('#iframeVideo').attr('title', name);
             $('#videoModalLabel').text(name);
@@ -22,44 +24,89 @@ $(document).ready(function () {
             $('#movieRating').text(rate);
             $('#userCount').text(`pour ${count} utilisateurs`);
 
-            // Sauvegarder l'ID du film dans le bouton de soumission pour la notation
             $('#submitRating').data('movie-id', $(this).attr('movie-id'));
 
             $('#detailsModal').modal('show');
         });
     }
 
-    // Appeler `showMovieDetails` au chargement initial de la page
+    // Initialisation de l'affichage des détails
     showMovieDetails();
 
-    // Nettoyer l'URL de la vidéo lors de la fermeture de la modale
+    // Nettoyage de l'URL de la vidéo après la fermeture
     $('#detailsModal').on('hidden.bs.modal', function () {
-        $('#iframeVideo').attr('src', ''); // Arrête la vidéo en supprimant l'URL
+        $('#iframeVideo').attr('src', '');
     });
 
-    // Fonction pour gérer la recherche et le filtrage par genres
+    // Fonction de recherche avec cache et gestion des genres
     function getSearchAndGenres() {
-        const searchText = $('.movieSearchInput').val();
-        const selectedGenres = [];
-        $('.genreCheckbox:checked').each(function() {
-            selectedGenres.push(parseInt($(this).val()));
-        });
+        const searchText = $('.movieSearchInput').val().trim();
+        const selectedGenres = $('.genreCheckbox:checked').map(function () {
+            return parseInt($(this).val());
+        }).get();
 
+        const cacheKey = searchText + selectedGenres.join(',');
+        if (cache[cacheKey]) {
+            updateMovieList(cache[cacheKey]);
+            return;
+        }
+
+        // Requête AJAX principale
         $.ajax({
             url: "/getList",
             type: 'POST',
             contentType: 'application/json',
-            data: JSON.stringify({ searchText: searchText, selectedGenres: selectedGenres }),
-            success: function(response) {
-                $('.movieList').html(response);
-
-                // Ré-attacher les événements de clic aux nouveaux boutons après la mise à jour
-                showMovieDetails();
+            data: JSON.stringify({ searchText, selectedGenres }),
+            success: function (response) {
+                cache[cacheKey] = response; // Stockage dans le cache
+                updateMovieList(response);
             }
         });
+
+        // Autocomplete (uniquement pour 3 caractères ou plus)
+        if (searchText.length >= 3 && !isFetchingAutocomplete) {
+            isFetchingAutocomplete = true;
+            $.ajax({
+                url: `/autocomplete?query=${encodeURIComponent(searchText)}`,
+                type: 'GET',
+                success: function (html) {
+                    autocompleteResults.html(html).show();
+                    isFetchingAutocomplete = false;
+                },
+                complete: function () {
+                    isFetchingAutocomplete = false;
+                }
+            });
+        } else {
+            autocompleteResults.hide();
+        }
     }
 
-    // Déclencher le filtre de recherche et genres sur changement
-    $('.movieSearchInput').on('input', getSearchAndGenres);
+    // Mise à jour de la liste des films
+    function updateMovieList(html) {
+        $('.movieList').html(html);
+        showMovieDetails(); // Réattacher les événements de clic après la mise à jour
+    }
+
+    // Délai de recherche pour éviter les appels répétitifs
+    $('.movieSearchInput').on('input', function () {
+        clearTimeout(typingTimer);
+        typingTimer = setTimeout(getSearchAndGenres, typingInterval);
+    });
+
     $('.genreCheckbox').on('change', getSearchAndGenres);
+
+    // Gestion du clic sur une suggestion d'auto-complétion
+    $(document).on('click', '.autocomplete-item', function () {
+        $('.movieSearchInput').val($(this).text());
+        autocompleteResults.hide();
+        getSearchAndGenres();
+    });
+
+    // Cacher les suggestions d'auto-complétion si l'utilisateur clique ailleurs
+    $(document).on('click', function (event) {
+        if (!$(event.target).closest('.search-box').length) {
+            autocompleteResults.hide();
+        }
+    });
 });
