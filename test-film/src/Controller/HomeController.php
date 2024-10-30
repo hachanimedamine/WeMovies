@@ -101,13 +101,13 @@ class HomeController extends AbstractController
         }
     }
     #[Route('/search-movie', name: 'search_movie', methods: ['POST'])]
-    public function searchMovie(Request $request, TmdbApiService $tmdbApiService): Response
+    public function searchMovie(Request $request, TmdbApiService $tmdbApiService, MovieHtmlGenerator $htmlGenerator): JsonResponse
     {
         $data = json_decode($request->getContent(), true);
         $query = $data['query'] ?? '';
 
         if (empty($query)) {
-            return new Response('Aucun terme de recherche fourni', 400);
+            return new JsonResponse(['error' => 'Aucun terme de recherche fourni'], 400);
         }
 
         try {
@@ -116,7 +116,7 @@ class HomeController extends AbstractController
 
             // Vérification des résultats
             if (empty($results)) {
-                return new Response('<p>Aucun film trouvé pour cette recherche.</p>', 404);
+                return new JsonResponse(['message' => 'Aucun film trouvé pour cette recherche.'], 404);
             }
 
             // Récupérer le premier film trouvé
@@ -124,26 +124,14 @@ class HomeController extends AbstractController
             $movie['video_key'] = $tmdbApiService->getFirstYouTubeVideoKey($movie['id']);
 
             // Générer le HTML pour le film trouvé
-            $generateHtml = sprintf(
-                '<div class="movie-item">
-                <h3>%s</h3>
-                <p>Note : %s</p>
-                <p>%s</p>
-                <iframe width="560" height="315" src="https://www.youtube.com/embed/%s" frameborder="0" allowfullscreen></iframe>
-             </div>',
-                htmlspecialchars($movie['title']),
-                htmlspecialchars($movie['vote_average']),
-                htmlspecialchars($movie['overview']),
-                htmlspecialchars($movie['video_key'])
-            );
+            $generateHtml = $htmlGenerator->generateSingleMovieHtml($movie);
 
-            return new Response($generateHtml);
+            return new JsonResponse(['html' => $generateHtml]);
 
         } catch (\Exception $e) {
-            return new Response('Erreur lors de la recherche du film : ' . $e->getMessage(), 500);
+            return new JsonResponse(['error' => 'Erreur lors de la recherche du film : ' . $e->getMessage()], 500);
         }
     }
-
 
     /* #[Route('/submit-rating', name: 'submit_rating', methods: ['POST'])]
     public function submitRating(Request $request, SessionInterface $session): JsonResponse

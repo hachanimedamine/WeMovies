@@ -108,7 +108,6 @@ $(document).ready(function () {
         }
     });
 
-    // Envoyer la recherche complète lors du clic sur le bouton
     $('.movieSearchInputButton').on('click', function (e) {
         e.preventDefault();
         const query = $('.movieSearchInput').val().trim();
@@ -119,14 +118,19 @@ $(document).ready(function () {
                 type: 'POST',
                 contentType: 'application/json',
                 data: JSON.stringify({ query: query }),
-                success: function (html) {
-                    $('.movieList').html(html); // Affiche le film dans .movieList
+                success: function (response) {
+                    if (response.html) {
+                        $('.movieList').html(response.html);
+                    } else if (response.message) {
+                        $('.movieList').html('<p>' + response.message + '</p>');
+                    }
                 },
                 error: function () {
-                    $('.movieList').html('<p>Aucun film trouvé.</p>');
+                    $('.movieList').html('<p>Erreur lors de la recherche du film.</p>');
                 }
             });
         }
     });
+
 
 });

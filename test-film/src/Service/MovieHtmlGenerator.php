@@ -48,5 +48,23 @@ $htmlOutput = '<div class="col-md-9 movieList">';
 return $htmlOutput;
 }
 
+    public function generateSingleMovieHtml(array $movie): string
+    {
+        $posterPath = isset($movie['poster_path']) ? htmlspecialchars($movie['poster_path']) : '';
+        $title = isset($movie['title']) ? htmlspecialchars($movie['title']) : 'Titre inconnu';
+        $overview = isset($movie['overview']) ? htmlspecialchars($movie['overview']) : 'Description non disponible.';
+        $voteAverage = isset($movie['vote_average']) ? number_format((float)$movie['vote_average'], 1, '.', '') : '0.0';
+        $voteCount = isset($movie['vote_count']) ? (int)$movie['vote_count'] : 0;
+        $id = isset($movie['id']) ? (int)$movie['id'] : '';
+        $videoKey = isset($movie['video_key']) ? htmlspecialchars($movie['video_key']) : '';
 
+        $htmlOutput = '<div class="movie-item">';
+        $htmlOutput .= '<h3>' . $title . '</h3>';
+        $htmlOutput .= '<p>Note : ' . $voteAverage . '</p>';
+        $htmlOutput .= '<p>' . $overview . '</p>';
+        $htmlOutput .= '<iframe width="560" height="315" src="https://www.youtube.com/embed/' . $videoKey . '" frameborder="0" allowfullscreen></iframe>';
+        $htmlOutput .= '</div>';
+
+        return $htmlOutput;
+    }
 }
