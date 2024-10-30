@@ -62,7 +62,7 @@ $(document).ready(function () {
             }
         });
 
-        // Autocomplete (uniquement pour 3 caractères ou plus)
+        // Autocomplete (uniquement pour 1 caractères ou plus)
         if (searchText.length >= 1 && !isFetchingAutocomplete) {
             isFetchingAutocomplete = true;
             $.ajax({
