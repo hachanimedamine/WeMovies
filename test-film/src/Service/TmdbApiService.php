@@ -113,4 +113,40 @@ class TmdbApiService
 
         return $this->fetchData('discover/movie', $queryParams)['results'] ?? [];
     }
+    public function searchMoviesByTitle(string $title): array
+    {
+        try {
+            $response = $this->client->request('GET', 'search/movie', [
+                'query' => [
+                    'query' => $title,
+                    'language' => 'fr-FR',
+                    'include_adult' => 'false',
+                    'page' => 1
+                ]
+            ]);
+
+            $data = json_decode($response->getBody()->getContents(), true);
+            return $data['results'] ?? [];
+        } catch (\Exception $e) {
+            // Log ou message d'erreur
+            throw new \RuntimeException('Erreur lors de la recherche du film : ' . $e->getMessage());
+        }
+    }
+
+    public function generateSingleMovieHtml(array $movie): string
+    {
+        return sprintf(
+            '<div class="movie-item">
+            <h3>%s</h3>
+            <p>Note : %s</p>
+            <p>%s</p>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/%s" frameborder="0" allowfullscreen></iframe>
+         </div>',
+            htmlspecialchars($movie['title']),
+            htmlspecialchars($movie['vote_average']),
+            htmlspecialchars($movie['overview']),
+            htmlspecialchars($movie['video_key'])
+        );
+    }
+
 }

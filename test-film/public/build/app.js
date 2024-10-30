@@ -1,7 +1,7 @@
 $(document).ready(function () {
     const autocompleteResults = $('.autocomplete-results');
     let typingTimer;
-    const typingInterval = 300; // Intervalle de frappe légèrement plus long pour limiter les requêtes
+    const typingInterval = 300; // Intervalle de frappe pour limiter les requêtes
     let cache = {}; // Cache pour stocker les résultats de recherche
     let isFetchingAutocomplete = false; // Contrôle pour les requêtes `autocomplete`
 
@@ -23,20 +23,19 @@ $(document).ready(function () {
             $('#movieDescription').text(desc);
             $('#movieRating').text(rate);
             $('#userCount').text(`pour ${count} utilisateurs`);
-
             $('#submitRating').data('movie-id', $(this).attr('movie-id'));
 
             $('#detailsModal').modal('show');
+        });
+
+        // Nettoyage de l'URL de la vidéo après la fermeture
+        $('#detailsModal').on('hidden.bs.modal', function () {
+            $('#iframeVideo').attr('src', '');
         });
     }
 
     // Initialisation de l'affichage des détails
     showMovieDetails();
-
-    // Nettoyage de l'URL de la vidéo après la fermeture
-    $('#detailsModal').on('hidden.bs.modal', function () {
-        $('#iframeVideo').attr('src', '');
-    });
 
     // Fonction de recherche avec cache et gestion des genres
     function getSearchAndGenres() {
@@ -71,7 +70,6 @@ $(document).ready(function () {
                 type: 'GET',
                 success: function (html) {
                     autocompleteResults.html(html).show();
-                    isFetchingAutocomplete = false;
                 },
                 complete: function () {
                     isFetchingAutocomplete = false;
@@ -109,4 +107,26 @@ $(document).ready(function () {
             autocompleteResults.hide();
         }
     });
+
+    // Envoyer la recherche complète lors du clic sur le bouton
+    $('.movieSearchInputButton').on('click', function (e) {
+        e.preventDefault();
+        const query = $('.movieSearchInput').val().trim();
+
+        if (query.length > 0) {
+            $.ajax({
+                url: '/search-movie',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ query: query }),
+                success: function (html) {
+                    $('.movieList').html(html); // Affiche le film dans .movieList
+                },
+                error: function () {
+                    $('.movieList').html('<p>Aucun film trouvé.</p>');
+                }
+            });
+        }
+    });
+
 });

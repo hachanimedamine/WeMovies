@@ -78,26 +78,69 @@ class HomeController extends AbstractController
     {
         $query = $request->query->get('query', '');
 
+        // Si la requête est vide, on retourne une réponse vide pour éviter un traitement inutile
         if (empty($query)) {
-            return new Response(''); // Réponse vide si la requête est vide
+            return new Response(''); // Réponse vide
         }
 
         try {
-            // Récupérer les films correspondant au champ de recherche
+            // Récupération des films correspondant au terme de recherche
             $results = $tmdbApiService->autocompleteSearch($query);
 
-            // Ajouter la clé `video_key` pour chaque film
-            foreach ($results as &$movie) {
-                $movie['video_key'] = $tmdbApiService->getFirstYouTubeVideoKey($movie['id']);
+            // Génération d'un HTML léger pour les suggestions d'autocomplétion
+            $suggestionsHtml = '';
+            foreach ($results as $movie) {
+                $suggestionsHtml .= '<div class="autocomplete-item" data-movie-id="' . htmlspecialchars($movie['id']) . '">'
+                    . htmlspecialchars($movie['title']) . '</div>';
             }
 
-            // Génération du HTML avec les données des films (incluant `video_key`)
-            $generateHtml = $htmlGenerator->generateMoviesHtml($results);
+            return new Response($suggestionsHtml);
+
+        } catch (\Exception $e) {
+            return new Response('Erreur lors de l\'auto-complétion : ' . $e->getMessage(), 500);
+        }
+    }
+    #[Route('/search-movie', name: 'search_movie', methods: ['POST'])]
+    public function searchMovie(Request $request, TmdbApiService $tmdbApiService): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        $query = $data['query'] ?? '';
+
+        if (empty($query)) {
+            return new Response('Aucun terme de recherche fourni', 400);
+        }
+
+        try {
+            // Rechercher le film par titre
+            $results = $tmdbApiService->searchMoviesByTitle($query);
+
+            // Vérification des résultats
+            if (empty($results)) {
+                return new Response('<p>Aucun film trouvé pour cette recherche.</p>', 404);
+            }
+
+            // Récupérer le premier film trouvé
+            $movie = $results[0];
+            $movie['video_key'] = $tmdbApiService->getFirstYouTubeVideoKey($movie['id']);
+
+            // Générer le HTML pour le film trouvé
+            $generateHtml = sprintf(
+                '<div class="movie-item">
+                <h3>%s</h3>
+                <p>Note : %s</p>
+                <p>%s</p>
+                <iframe width="560" height="315" src="https://www.youtube.com/embed/%s" frameborder="0" allowfullscreen></iframe>
+             </div>',
+                htmlspecialchars($movie['title']),
+                htmlspecialchars($movie['vote_average']),
+                htmlspecialchars($movie['overview']),
+                htmlspecialchars($movie['video_key'])
+            );
 
             return new Response($generateHtml);
 
         } catch (\Exception $e) {
-            return new Response('Erreur lors de l\'auto-complétion : ' . $e->getMessage(), 500);
+            return new Response('Erreur lors de la recherche du film : ' . $e->getMessage(), 500);
         }
     }
 
