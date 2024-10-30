@@ -63,7 +63,7 @@ $(document).ready(function () {
         });
 
         // Autocomplete (uniquement pour 3 caractères ou plus)
-        if (searchText.length >= 1 && !isFetchingAutocomplete) {
+        if (searchText.length >= 3 && !isFetchingAutocomplete) {
             isFetchingAutocomplete = true;
             $.ajax({
                 url: `/autocomplete?query=${encodeURIComponent(searchText)}`,
