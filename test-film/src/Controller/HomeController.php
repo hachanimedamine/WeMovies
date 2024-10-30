@@ -111,7 +111,7 @@ class HomeController extends AbstractController
         }
 
         try {
-            // Rechercher le film par titre
+            // Rechercher les films par titre
             $results = $tmdbApiService->searchMoviesByTitle($query);
 
             // Vérification des résultats
@@ -119,14 +119,16 @@ class HomeController extends AbstractController
                 return new JsonResponse(['message' => 'Aucun film trouvé pour cette recherche.'], 404);
             }
 
-            // Récupérer le premier film trouvé
-            $movie = $results[0];
-            $movie['video_key'] = $tmdbApiService->getFirstYouTubeVideoKey($movie['id']);
+            // Générer le HTML pour chaque film trouvé
+            $htmlOutput = '';
+            foreach ($results as $movie) {
+                // Récupérer la clé vidéo pour chaque film
+                $movie['video_key'] = $tmdbApiService->getFirstYouTubeVideoKey($movie['id']);
+                // Générer le HTML pour le film et l'ajouter au résultat final
+                $htmlOutput .= $htmlGenerator->generateSingleMovieHtml($movie);
+            }
 
-            // Générer le HTML pour le film trouvé
-            $generateHtml = $htmlGenerator->generateSingleMovieHtml($movie);
-
-            return new JsonResponse(['html' => $generateHtml]);
+            return new JsonResponse(['html' => $htmlOutput]);
 
         } catch (\Exception $e) {
             return new JsonResponse(['error' => 'Erreur lors de la recherche du film : ' . $e->getMessage()], 500);
