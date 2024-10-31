@@ -29,8 +29,7 @@ class TmdbApiService
             'query' => [
                 'query' => $query,
                 'include_adult' => 'false',
-                'language' => 'en-US',
-                'page' => 1
+                'language' => 'en-US'
             ]
         ]);
 
@@ -75,7 +74,7 @@ class TmdbApiService
 
     public function getTopRatedMovie(): array
     {
-        return $this->fetchData('movie/top_rated', ['language' => 'fr-FR', 'page' => 1])['results'][0] ?? [];
+        return $this->fetchData('movie/top_rated', ['language' => 'fr-FR'])['results'][0] ?? [];
     }
 
     public function getGenres(): array
@@ -89,7 +88,6 @@ class TmdbApiService
             'include_adult' => 'false',
             'include_video' => 'false',
             'language' => 'fr-FR',
-            'page' => 1,
             'sort_by' => 'popularity.desc',
         ])['results'] ?? [];
     }
@@ -100,7 +98,6 @@ class TmdbApiService
             'include_adult' => 'false',
             'include_video' => 'false',
             'language' => 'en-US',
-            'page' => 1,
             'sort_by' => 'popularity.desc',
         ];
 
@@ -120,8 +117,7 @@ class TmdbApiService
                 'query' => [
                     'query' => $title,
                     'language' => 'fr-FR',
-                    'include_adult' => 'false',
-                    'page' => 1
+                    'include_adult' => 'false'
                 ]
             ]);
 
