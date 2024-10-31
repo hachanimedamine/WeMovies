@@ -29,7 +29,8 @@ class TmdbApiService
             'query' => [
                 'query' => $query,
                 'include_adult' => 'false',
-                'language' => 'en-US'
+                'language' => 'en-US',
+              
             ]
         ]);
 
