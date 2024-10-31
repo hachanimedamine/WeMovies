@@ -30,7 +30,7 @@ class TmdbApiService
                 'query' => $query,
                 'include_adult' => 'false',
                 'language' => 'en-US',
-              
+
             ]
         ]);
 
