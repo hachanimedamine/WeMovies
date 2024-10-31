@@ -4,7 +4,7 @@ namespace App\Service;
 
 class MovieHtmlGenerator
 {
-// Méthode d'origine pour générer la liste complète des films
+    // Méthode d'origine pour générer la liste complète des films
     public function generateMoviesHtml($movies): string
     {
         $htmlOutput = '<div class="col-md-9 movieList">';
@@ -17,12 +17,12 @@ class MovieHtmlGenerator
             $id = isset($movie['id']) ? (int)$movie['id'] : '';
             $videoKey = isset($movie['video_key']) ? htmlspecialchars($movie['video_key']) : '';
 
-            $htmlOutput .= '<div class="movie-card d-flex">';
-            $htmlOutput .= '<img src="https://image.tmdb.org/t/p/w500/' . $posterPath . '" alt="' . $title . '" class="movie-img">';
+            $htmlOutput .= '<div class="movie-card d-flex" style="flex-basis: 100%; flex-grow: 1;">';
+            $htmlOutput .= '<img src="https://image.tmdb.org/t/p/w500/' . $posterPath . '" alt="' . $title . '" class="movie-img" style="width: 100px; height: auto; border-radius: 5px; margin-right: 15px;">';
             $htmlOutput .= '<div class="movie-info">';
             $htmlOutput .= '<h5>' . $title . '</h5>';
             $htmlOutput .= '<p>' . $overview . '</p>';
-            $htmlOutput .= '<p class="star-rating">' . $voteAverage;
+            $htmlOutput .= '<p class="star-rating" style="color: #ffc107; font-size: 12px;">' . $voteAverage;
 
             for ($i = 1; $i <= 5; $i++) {
                 $htmlOutput .= '<i class="fa fa-star"' . ($i < $voteAverage / 2 ? ' style="color: blue;"' : '') . '></i>';
@@ -39,7 +39,7 @@ class MovieHtmlGenerator
             $htmlOutput .= 'movie-id="' . $id . '" ';
             $htmlOutput .= 'movie-count="' . $voteCount . '" ';
             $htmlOutput .= 'movie-video-key="' . $videoKey . '" ';
-            $htmlOutput .= 'class="btn btn-primary btn-details detailsFilm">Lire le détails</a>';
+            $htmlOutput .= 'class="btn btn-primary btn-details detailsFilm" style="padding: 6px 12px; font-size: 12px; border-radius: 4px;">Lire le détails</a>';
 
             $htmlOutput .= '</div></div>';
         }
@@ -58,11 +58,11 @@ class MovieHtmlGenerator
         $id = isset($movie['id']) ? (int)$movie['id'] : '';
         $videoKey = isset($movie['video_key']) ? htmlspecialchars($movie['video_key']) : '';
 
-        $htmlOutput = '<div class="movie-item">';
+        $htmlOutput = '<div class="movie-item" style="text-align: center; max-width: 600px; margin: 0 auto;">';
         $htmlOutput .= '<h3>' . $title . '</h3>';
         $htmlOutput .= '<p>Note : ' . $voteAverage . '</p>';
         $htmlOutput .= '<p>' . $overview . '</p>';
-        $htmlOutput .= '<iframe width="560" height="315" src="https://www.youtube.com/embed/' . $videoKey . '" frameborder="0" allowfullscreen></iframe>';
+        $htmlOutput .= '<iframe width="100%" height="315" src="https://www.youtube.com/embed/' . $videoKey . '" frameborder="0" allowfullscreen style="border-radius: 8px; margin-top: 10px;"></iframe>';
         $htmlOutput .= '</div>';
 
         return $htmlOutput;
