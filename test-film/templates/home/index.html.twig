@@ -14,10 +14,67 @@
 
 {% block body %}
 
-
-
-
     <div class="container mt-5">
+        <!-- Header Section -->
+        <div class="header">
+            <h1>A propos de We Movies</h1>
+            <div class="search-box" style="position: relative;">
+                <input type="text" placeholder="Rechercher..." class="form-control d-inline-block movieSearchInput" style="width: 250px;">
+                <button class="btn btn-primary movieSearchInputButton"><i class="fas fa-search"></i></button>
+                <div class="autocomplete-results" style="position: absolute; top: 100%; left: 0; width: 130%; background-color: white; border: 1px solid #ddd; display: none; z-index: 1000;"></div>
+            </div>
+        </div>
+
+        <!-- Video Section -->
+        <div class="video-thumbnail">
+            {% if bestMovieVideoKey %}
+                <iframe width="800" height="400" src="https://www.youtube.com/embed/{{ bestMovieVideoKey }}" title="{{ bestMovie.original_title }}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            {% else %}
+                <img src="https://image.tmdb.org/t/p/w500/{{ bestMovie.poster_path }}" alt="{{ bestMovie.original_title }}" style="width: 600px; height: 350px;">
+            {% endif %}
+            <h4>{{ bestMovie.original_title }} - Bande-annonce</h4>
+            <p class="overview">{{ bestMovie.overview }}</p>
+        </div>
+
+        <!-- Row for Sidebar and Movies -->
+        <div class="row mt-4">
+            <!-- Sidebar for Genres -->
+            <div class="col-md-3 sidebar">
+                <h5>Genres</h5>
+                {% for genre in genres %}
+                    <div class="form-check">
+                        <input class="form-check-input genreCheckbox" type="checkbox" id="{{ genre.id }}" value="{{ genre.id }}">
+                        <label class="form-check-label" for="{{ genre.name }}">{{ genre.name }}</label>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Movies List (Smaller Cards) -->
+            <div class="col-md-6 offset-md-1 movieList">
+                {% for movie in movies %}
+                    <div class="movie-card d-flex">
+                        <img src="https://image.tmdb.org/t/p/w300/{{ movie.poster_path }}" alt="{{ movie.original_title }}" class="movie-img">
+                        <div class="movie-info">
+                            <h5>{{ movie.title }}</h5>
+                            <p class="overview">{{ movie.overview }}</p>
+                            <p class="star-rating">
+                                {{ movie.vote_average | number_format(1, '.', '') }}
+                                {% for i in 1..5 %}
+                                    <i class="fa fa-star{% if i > movie.vote_average / 2 %}-o{% endif %}"></i>
+                                {% endfor %}
+                                <small>({{ movie.vote_count }} votes)</small>
+                            </p>
+                            <a href="#" movie-video-key="{{ movie.video_key }}"   movie-desc="{{ movie.overview }}" movie-image="{{movie.poster_path}}" movie-rate="{{movie.vote_average}}" movie-name="{{movie.title}}" movie-id="{{movie.id}}"  class="btn btn-primary btn-details detailsFilm">Lire le détails</a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+
+
+{#    <div class="container mt-5">
         <!-- Header Section -->
         <div class="header">
             <h1>A propos de We Movies</h1>
@@ -49,6 +106,7 @@
                      style="width: 800px; height: 500px;">
             {% endif %}
             <h4>{{ bestMovie.original_title }} - Bande-annonce</h4>
+
         </div>
 
         <i class="fas fa-play-circle play-button"></i>
@@ -57,44 +115,44 @@
                 <p>{{ bestMovie.original_title }} Bande-annonce VF</p>
             </div>
         </div>
-
-        <div class="row">
-            <!-- Sidebar for Genres -->
-            <div class="col-md-3 sidebar">
-                <h5>Genres</h5>
-                {% for genre in genres %}
+    <div class="row">
+        <!-- Sidebar for Genres -->
+        <div class="col-md-3 sidebar">
+            <h5>Genres</h5>
+            {% for genre in genres %}
                 <div class="form-check">
                     <input class="form-check-input genreCheckbox" type="checkbox"  id="{{ genre.id }}" value="{{ genre.id }}">
                     <label class="form-check-label" for="{{ genre.name }}">{{ genre.name }}</label>
                 </div>
 
-                {% endfor %}
-            </div>
-
-            <!-- Movies List -->
-            <div class="col-md-9 movieList">
-                {% for movie in movies %}
-                    <div class="movie-card d-flex">
-                        <img src="https://image.tmdb.org/t/p/w500/{{ movie.poster_path }}" alt="{{ movie.original_title }}" class="movie-img">
-                        <div class="movie-info">
-
-                            <h5>{{ movie.title }}</h5>
-                            <p>{{ movie.overview }}</p>
-                            <p class="star-rating">
-                                {{ movie.vote_average | number_format(1, '.', '') }}
-                                {% for i in 1..5 %}
-                                    <i class="fa fa-star"{% if i < movie.vote_average/2 %} style="color: blue;"{% endif %}></i>
-                                {% endfor %}
-                                <small>({{ movie.vote_count }} votes)</small>
-                            </p>
-
-                            <a href="#" movie-video-key="{{ movie.video_key }}"   movie-desc="{{ movie.overview }}" movie-image="{{movie.poster_path}}" movie-rate="{{movie.vote_average}}" movie-name="{{movie.title}}" movie-id="{{movie.id}}"  class="btn btn-primary btn-details detailsFilm">Lire le détails</a>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
+            {% endfor %}
         </div>
-    </div>
+
+        <!-- Movies List -->
+        <div class="col-md-9 movieList">
+            {% for movie in movies %}
+                <div class="movie-card d-flex">
+                    <img src="https://image.tmdb.org/t/p/w500/{{ movie.poster_path }}" alt="{{ movie.original_title }}" class="movie-img">
+                    <div class="movie-info">
+
+                        <h5>{{ movie.title }}</h5>
+                        <p>{{ movie.overview }}</p>
+                        <p class="star-rating">
+                            {{ movie.vote_average | number_format(1, '.', '') }}
+                            {% for i in 1..5 %}
+                                <i class="fa fa-star"{% if i < movie.vote_average/2 %} style="color: blue;"{% endif %}></i>
+                            {% endfor %}
+                            <small>({{ movie.vote_count }} votes)</small>
+                        </p>
+
+                        <a href="#" movie-video-key="{{ movie.video_key }}"   movie-desc="{{ movie.overview }}" movie-image="{{movie.poster_path}}" movie-rate="{{movie.vote_average}}" movie-name="{{movie.title}}" movie-id="{{movie.id}}"  class="btn btn-primary btn-details detailsFilm">Lire le détails</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>#}
+
+
 
     {% include 'home/modalFilm.html.twig' %}
 
